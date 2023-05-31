@@ -4,3 +4,5 @@ venv
 genres_original
 gender_dataset_v1/gender_datset
 *.zip
+*.json
+__pycache__

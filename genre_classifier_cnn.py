@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 import tensorflow.keras as keras
 import matplotlib.pyplot as plt
 
-DATASET_PATH = "data_10.json"
+DATASET_PATH = "data_gender.json"
 
 def load_data(data_path):
     with open(data_path, "r") as fp:
@@ -22,10 +22,10 @@ def prepare_datasets(test_size, validation_size):
     x, y = load_data(DATASET_PATH)
 
     # create train/test split
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=test_size)
+    x_train, x_test, y_train, y_test = train_test_split(x, y, stratify=y, test_size=test_size, random_state=42, shuffle=True)
 
     # create train/validation split
-    x_train, x_validation, y_train, y_validation = train_test_split(x_train, y_train, test_size=validation_size)
+    x_train, x_validation, y_train, y_validation = train_test_split(x_train, y_train,stratify=y_train, test_size=validation_size, random_state=42, shuffle=True)
 
     # 3d array (adds the "gray chanel" to the mfccs)
     x_train = x_train[..., np.newaxis] # 4d array -> (num_samples, 130, 13, 1)
@@ -96,14 +96,14 @@ def plot_history(history):
 
     # create accuracy subplot
     axs[0].plot(history.history["accuracy"], label = "train accuaracy")
-    axs[0].plot(history.history["val_accuracy"], label = "test accuaracy")
+    axs[0].plot(history.history["val_accuracy"], label = "val accuaracy")
     axs[0].set_ylabel("Accuracy")
     axs[0].legend(loc="lower right")
     axs[0].set_title("Accuracy eval")
 
     # create error subplot
     axs[1].plot(history.history["loss"], label = "train error")
-    axs[1].plot(history.history["val_loss"], label = "test error")
+    axs[1].plot(history.history["val_loss"], label = "val error")
     axs[1].set_ylabel("Error")
     axs[1].set_xlabel("Epoch")
     axs[1].legend(loc="upper right")
@@ -113,16 +113,7 @@ def plot_history(history):
 
 def predict(model, x, y):
 
-    classes = ['reggae',
-     'pop',
-     'jazz',
-     'blues',
-     'rock',
-     'hiphop',
-     'country',
-     'classical',
-     'disco',
-     'metal']
+    classes = ['female', 'male']
 
     x = x[np.newaxis, ...]
     # prediction [[0.1, 0.2, ...]]
@@ -142,42 +133,45 @@ def main():
     
     # build the CNN net
     input_shape = (x_train.shape[1], x_train.shape[2], x_train.shape[3])
-    model = build_model(input_shape)
+    # model = build_model(input_shape)
     
-    # # compile the network
-    optimizer = keras.optimizers.Adam(learning_rate = 0.0001)
+    # # # compile the network
+    # optimizer = keras.optimizers.Adam(learning_rate = 0.0001)
 
-    model.compile(optimizer = optimizer,
-                  loss="sparse_categorical_crossentropy",
-                  metrics= ["accuracy"])
+    # model.compile(optimizer = optimizer,
+    #               loss="sparse_categorical_crossentropy",
+    #               metrics= ["accuracy"])
 
     # print(x_train.shape)
+    # print(x_validation.shape)
+    # print(x_test.shape)
 
-    # train the CNN
+    #train the CNN
 
-    model.fit(x_train,
-              y_train, 
-              validation_data = (x_validation , y_validation), 
-              epochs=30,
-              batch_size=32)
+    # model.summary()
 
-       
-
-    # model.save_weights("./checkpoints/genre_classifier_checkpoint")
+    # # train network
+    # history = model.fit(x_train,
+    #           y_train, 
+    #           validation_data = (x_validation , y_validation), 
+    #           epochs=30,
+    #           batch_size=32)
     
-    # evaluate the CNN on the test set
-    test_error, test_accuracy = model.evaluate(x_test, y_test, verbose=1)
-    print(f"Acuracy on test set is {test_accuracy}")
+    # plot_history(history)
 
-    # model = build_model(input_shape)
+    # model.save_weights("./checkpoints/gender_classifier_checkpoint")
+    
+    # # evaluate the CNN on the test set
+    # test_error, test_accuracy = model.evaluate(x_test, y_test, verbose=1)
+    # print(f"Acuracy on test set is: {test_accuracy}")
+    # print(f"Error on test set is: {test_error}")
 
-    # model.load_weights('./checkpoints/genre_classifier_checkpoint').expect_partial()
-
-    # # make predictions on a sample
-    # x = x_test[102]
-    # y = y_test[102]
-
-    # predict(model, x, y)
+    model = build_model(input_shape)
+    model.load_weights('./checkpoints/gender_classifier_checkpoint').expect_partial()
+    # make predictions on a sample
+    x = x_test[102]
+    y = y_test[102]
+    predict(model, x, y)
 
     
     
