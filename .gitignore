@@ -6,3 +6,8 @@ gender_dataset_v1/gender_datset
 *.zip
 *.json
 __pycache__
+voxceleb
+voxceleb_5_sec
+gender_dataset_v2/gender_dataset
+gender_dataset_v3/gender_dataset
+*.csv

@@ -1,0 +1,2 @@
+model_checkpoint_path: "gender_classifier_checkpoint"
+all_model_checkpoint_paths: "gender_classifier_checkpoint"

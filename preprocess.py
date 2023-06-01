@@ -8,8 +8,8 @@ import os
 import math
 import librosa
 
-DATASET_PATH = "gender_dataset_v1/gender_datset"
-JSON_PATH = "data_gender.json"
+DATASET_PATH = "gender_dataset_v3/gender_dataset"
+JSON_PATH = "data_gender_3.json"
 SAMPLE_RATE = 22050
 TRACK_DURATION = 5 # measured in seconds
 SAMPLES_PER_TRACK = SAMPLE_RATE * TRACK_DURATION
